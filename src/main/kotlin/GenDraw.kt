@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
 
 
 class GenDraw(val start: Long) {
-    val fileName = "reseda.jpg"
+    val fileName = "nature.jpg"
     val target = ImageIO.read(Thread.currentThread().contextClassLoader.getResource(fileName))
     val geneCount = if (target.width * target.height > 2000000) 60000
      else if (target.width * target.height in 300001..499999) 10000
@@ -127,10 +127,10 @@ class GenDraw(val start: Long) {
                 }" else ""
             )
             //after each 200 iterations increases accuracy
-            if (i > 0 && i % 20 == 0) {
+            if (i > 0 && i % 10 == 0) {
                 context.imgDiff.incAccuracy(i)
                 //after each 1000 iterations decreases max allowed size of polygon
-                if (i % 200 == 0) mutator.decreaseSize()
+                if (i % 100 == 0) mutator.decreaseSize()
             }
             panel.repaint()
             buildNextGeneration(i)
@@ -157,7 +157,7 @@ class GenDraw(val start: Long) {
                     Pair(one, two),
                     mutator,
                     context.mutationProbability.next(),
-                    if (change % 2 == 0) true else false
+                    change % 2 == 0
                 ))
         }
     }

@@ -1,4 +1,5 @@
 import java.util.*
+import kotlin.math.max
 
 interface Mutator {
     fun mutate(gene: Rectangle, probability: Float): Rectangle
@@ -12,7 +13,7 @@ class IncrementalMutator(val context: Context) : Mutator {
     val halfMaxColorDelta = maxColorDelta / 2
 
     //var sizes = listOf(5, 7, 9, 13)
-    var sizes = listOf(3, 5, 7, 9, 13, 18, 24, 30, 36)
+    var sizes = listOf(2, 3, 5, 7, 9, 13, 18, 24, 30, 36, 42, 50)
 
     override fun mutate(gene: Rectangle, probability: Float): Rectangle {
         if (random.nextDouble() > probability) {
@@ -23,17 +24,18 @@ class IncrementalMutator(val context: Context) : Mutator {
     }
 
     fun decreaseSize() {
-        when (sizes.size) {
-            3 -> sizes = listOf(7, 5)
-            4 -> sizes = listOf(7, 5, 9)
-            5 -> sizes = listOf(7, 5, 9, 13)
-            6 -> sizes = listOf(7, 5, 9, 13, 18)
-            7 -> sizes = listOf(7, 5, 9, 13, 18, 24)
-            8 -> sizes = listOf(7, 5, 9, 13, 18, 24, 30)
+        sizes.subList(0, max(1, sizes.size-1))
+        /*when (sizes.size) {
+            3 -> sizes = sizes.subList(0, max(1, sizes.size-1))
+            4 -> sizes = sizes.subList(0, sizes.size-1)
+            5 -> sizes = sizes.subList(0, sizes.size-1)
+            6 -> sizes = sizes.subList(0, sizes.size-1)
+            7 -> sizes = sizes.subList(0, sizes.size-1)
+            8 -> sizes = sizes.subList(0, sizes.size-1)
             //3 -> sizes = listOf(7, 5)
             //3 -> sizes = listOf(3, 5)
             //4 -> sizes = listOf(3, 5, 7)
-        }
+        }*/
     }
 
     private fun mutateRectangle(gene: Rectangle): Rectangle {
