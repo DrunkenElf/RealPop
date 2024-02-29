@@ -1,5 +1,3 @@
-import java.awt.Color
-import java.awt.image.BufferedImage
 import java.util.*
 
 interface Mutator {
@@ -14,7 +12,7 @@ class IncrementalMutator(val context: Context) : Mutator {
     val halfMaxColorDelta = maxColorDelta / 2
 
     //var sizes = listOf(5, 7, 9, 13)
-    var sizes = listOf(3, 5, 7, 9, 13)
+    var sizes = listOf(3, 5, 7, 9, 13, 18, 24, 30, 36)
 
     override fun mutate(gene: Rectangle, probability: Float): Rectangle {
         if (random.nextDouble() > probability) {
@@ -29,8 +27,9 @@ class IncrementalMutator(val context: Context) : Mutator {
             3 -> sizes = listOf(7, 5)
             4 -> sizes = listOf(7, 5, 9)
             5 -> sizes = listOf(7, 5, 9, 13)
-            //6 -> sizes = listOf(7, 5, 9, 13, 18)
-            //7 -> sizes = listOf(7, 5, 9, 13, 18, 24)
+            6 -> sizes = listOf(7, 5, 9, 13, 18)
+            7 -> sizes = listOf(7, 5, 9, 13, 18, 24)
+            8 -> sizes = listOf(7, 5, 9, 13, 18, 24, 30)
             //3 -> sizes = listOf(7, 5)
             //3 -> sizes = listOf(3, 5)
             //4 -> sizes = listOf(3, 5, 7)
@@ -53,9 +52,10 @@ class IncrementalMutator(val context: Context) : Mutator {
         else if (gene.isOld) {
             when (random.nextInt(2)) {
                 0 -> {
+                    val newPosition = moveRectangle(gene.x, gene.y)
                     gene.x = bound(
                         if (random.nextBoolean())
-                            if (random.nextBoolean()) gene.x + random.nextInt(gene.w) + 10 else gene.x - random.nextInt(
+                            if (random.nextBoolean()) newPosition.first + random.nextInt(gene.w) + 10 else newPosition.first - random.nextInt(
                                 gene.w
                             ) + 10
                         else
@@ -65,28 +65,29 @@ class IncrementalMutator(val context: Context) : Mutator {
                     )
                     gene.y = bound(
                         if (random.nextBoolean())
-                            if (random.nextBoolean()) gene.y + random.nextInt(gene.h) + 10 else gene.y - random.nextInt(
-                                gene.h
-                            ) + 10
+                            if (random.nextBoolean())
+                                newPosition.second + random.nextInt(gene.h) + 10
+                            else newPosition.second - random.nextInt(gene.h) + 10
                         else
                             random.nextInt(context.height),
                         0,
                         context.height - gene.h
                     )
                 }
+
                 1 -> {
                     //gene.w = bound(sizes.random(), 3, 5)
-                    if (random.nextBoolean()){
+                    if (random.nextBoolean()) {
                         gene.w = bound(sizes.random(), 3, 5)
                         gene.h = bound(sizes.random(), 7, 30)
                     } else {
                         gene.w = bound(sizes.random(), 7, 30)
                         gene.h = bound(sizes.random(), 3, 5)
                     }
-                   /* gene.w = bound(sizes.random(), 7, 30)
-                    gene.h = bound(sizes.random(), 3, 5)*/
-                   /* gene.w = sizes.random()
-                    gene.h = sizes.random()*/
+                    /* gene.w = bound(sizes.random(), 7, 30)
+                     gene.h = bound(sizes.random(), 3, 5)*/
+                    /* gene.w = sizes.random()
+                     gene.h = sizes.random()*/
 
                 }
             }
@@ -112,4 +113,20 @@ class IncrementalMutator(val context: Context) : Mutator {
         gene.color[i] = bound(gene.color[i] + random.nextInt(maxColorDelta) - halfMaxColorDelta, 0, 255)
     }
 
+    private fun moveRectangle(x: Int, y: Int): Pair<Int, Int> {
+        val randomInt = random.nextInt(30)
+        if (randomInt % 5 == 0) {
+            if (randomInt % 3 == 0) {
+                return Pair(
+                    x + random.nextInt(200),
+                    y - random.nextInt(200)
+                )
+            }
+            return Pair(
+                x - random.nextInt(200),
+                y + random.nextInt(200)
+            )
+        }
+        return Pair(x, y)
+    }
 }

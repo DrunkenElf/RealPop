@@ -94,7 +94,7 @@ class Genetic(val context: Context, val target: BufferedImage, val mutator: Incr
         val color = IntArray(4)
         color.set(0, random.nextInt(256))
         color.set(1, random.nextInt(256))
-        color.set(2, random.nextInt(256))
+        color[2] = random.nextInt(256)
         color.set(3, random.nextInt(256))
         return color
     }

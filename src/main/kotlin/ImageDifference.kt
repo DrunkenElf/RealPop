@@ -1,12 +1,6 @@
 import java.awt.Color
 import java.awt.image.BufferedImage
-import java.lang.Double.min
-import java.lang.String
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.abs
 import kotlin.math.max
-import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 interface FitnessFunction {
@@ -16,7 +10,7 @@ interface FitnessFunction {
 
 class ImageDifference(val target: BufferedImage) : FitnessFunction {
     val step = 3
-    var allowedError = 35
+    var allowedError = 100
     val rgbTarget: Array<IntArray> = Array(target.width) { x: Int ->
         IntArray(target.height) { y -> target.getRGB(x, y) }
     }
@@ -47,8 +41,13 @@ class ImageDifference(val target: BufferedImage) : FitnessFunction {
         )
     }
 
-    fun incAccuracy() {
-        allowedError = max(7, allowedError - 1)
+    fun incAccuracy(i: Int) {
+        allowedError = max(
+            7,
+            if (i > 300) allowedError - 1
+            else if (i > 200) allowedError - 2
+            else allowedError - 5
+        )
         println("accuracy increased; new delta = $allowedError")
     }
 
@@ -92,8 +91,8 @@ class ImageDifference(val target: BufferedImage) : FitnessFunction {
         }
         val colOld: Int? = if (tempList.size >= 1) getAveragCol(tempList) else null
         val colTar = rgbTarget[
-                kotlin.math.min(shape.x + shape.w / 2 - 1, target.width-1)][
-                kotlin.math.min(shape.y + shape.h / 2 - 1, target.height-1)]
+            kotlin.math.min(shape.x + shape.w / 2 - 1, target.width - 1)][
+            kotlin.math.min(shape.y + shape.h / 2 - 1, target.height - 1)]
         if (errNew < errOld) {
             if (findDiff(Color(color), Color(colTar)) < allowedError + 5)
                 return Pair(Pair(0, null), errNew)

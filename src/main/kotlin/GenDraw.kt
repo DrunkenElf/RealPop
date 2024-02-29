@@ -9,7 +9,9 @@ import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.GridLayout
 import java.awt.image.BufferedImage
+import java.io.BufferedReader
 import java.io.File
+import java.io.InputStreamReader
 import java.util.*
 import javax.imageio.ImageIO
 import javax.swing.JFrame
@@ -25,14 +27,17 @@ fun main(args: Array<String>) {
 
 
 class GenDraw(val start: Long) {
-    val fileName = "head.jpg"
+    val fileName = "reseda.jpg"
     val target = ImageIO.read(Thread.currentThread().contextClassLoader.getResource(fileName))
+    val geneCount = if (target.width * target.height > 2000000) 60000
+     else if (target.width * target.height in 300001..499999) 10000
+     else 30000
 
     val context = Context(
         width = target.width,
         height = target.height,
-        geneCount = 30000,
-        populationCount = 4,
+        geneCount = geneCount,
+        populationCount = 10,
         mutationProbability = DynamicProbability(0.001f, 0.5f),
         maxPolygonSize = 12,
         useAlpha = true,
@@ -66,7 +71,8 @@ class GenDraw(val start: Long) {
 
     fun run() {
         val frame = JFrame()
-
+        println(geneCount)
+        println(target.width * target.height)
         frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 
         frame.setSize(target.width + 50, target.height + 50)
@@ -107,7 +113,7 @@ class GenDraw(val start: Long) {
         mostFitCanvasGraphics.color = Color.BLACK
         mostFitCanvasGraphics.clearRect(0,0, target.width, target.height)
         panel.repaint()
-        Thread.sleep(4000)
+        Thread.sleep(1000)
         println("start of the Iteration")
         // body of our iteration
         do {
@@ -121,10 +127,10 @@ class GenDraw(val start: Long) {
                 }" else ""
             )
             //after each 200 iterations increases accuracy
-            if (i > 0 && i % 200 == 0) {
-                context.imgDiff.incAccuracy()
+            if (i > 0 && i % 20 == 0) {
+                context.imgDiff.incAccuracy(i)
                 //after each 1000 iterations decreases max allowed size of polygon
-                if (i % 1000 == 0) mutator.decreaseSize()
+                if (i % 200 == 0) mutator.decreaseSize()
             }
             panel.repaint()
             buildNextGeneration(i)
